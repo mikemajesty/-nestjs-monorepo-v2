@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "experimentalDecorators": true,
+    "outDir": "../../dist"
+  },
+  "include": [
+    "./**/*.ts",
+    "database/postgres/config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

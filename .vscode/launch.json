@@ -1,0 +1,35 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug: @user.api",
+      "type": "node",
+      "request": "launch",
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "start:user"
+      ]
+    },
+    {
+      "name": "Debug: @auth.api",
+      "type": "node",
+      "request": "launch",
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "start:auth"
+      ]
+    }
+  ]
+}

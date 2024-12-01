@@ -1,0 +1,26 @@
+{
+  "name": "@app/utils",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "nest build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/swagger": "^8.0.7",
+    "axios-retry": "^4.5.0",
+    "luxon": "^3.5.0",
+    "nestjs-convert-to-curl": "^1.0.0",
+    "uuid": "^11.0.3",
+    "write-excel-file": "^2.0.10"
+  },
+  "description": "",
+  "devDependencies": {
+    "@types/luxon": "^3.4.2",
+    "@types/uuid": "^10.0.0"
+  }
+}

@@ -1,0 +1,13 @@
+# dependencies
+**/node_modules/**
+**/**/node_modules/**
+**/package-lock.json
+**/**/package-lock.json
+node_modules
+package-lock.json
+yarn.lock
+
+dist
+yarn-error.log
+**/yarn-error.log/**
+coverage

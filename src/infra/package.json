@@ -1,0 +1,33 @@
+{
+  "name": "@app/infra",
+  "version": "1.0.0",
+  "description": "NestJs Monorepo V2 Infra",
+  "author": "mike.rodrigues.lima@gmail.com",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "nest build"
+  },
+  "dependencies": {
+    "@nestjs/mongoose": "^10.1.0",
+    "@nestjs/typeorm": "^10.0.2",
+    "axios-better-stacktrace": "^2.1.7",
+    "convert-pino-request-to-curl": "^1.0.0",
+    "handlebars": "^4.7.8",
+    "jsonwebtoken": "^9.0.2",
+    "mongo-migrate-ts": "^1.6.2",
+    "mongodb": "^6.10.0",
+    "mongoose-paginate-v2": "^1.8.5",
+    "nestjs-i18n": "^10.5.0",
+    "node-cache": "^5.1.2",
+    "nodemailer": "^6.9.16",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "pino-pretty": "^13.0.0",
+    "redis": "^4.7.0",
+    "typeorm-naming-strategies": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.17"
+  }
+}

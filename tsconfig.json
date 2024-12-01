@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/apps/*": [
+        "src/apps/*"
+      ],
+      "@/core/*": [
+        "src/core/*"
+      ],
+      "@/observables/*": [
+        "src/observables/*"
+      ],
+      "@/infra/*": [
+        "src/infra/*"
+      ],
+      "@/utils/*": [
+        "src/utils/*"
+      ],
+      "@/libs/*": [
+        "src/libs/*"
+      ],
+      "@/tools/*": [
+        "src/tools/*"
+      ]
+    },
+    "incremental": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false
+  }
+}
