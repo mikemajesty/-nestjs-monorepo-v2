@@ -25,11 +25,11 @@ export class RefreshTokenUsecase implements IUsecase {
   async execute(input: RefreshTokenInput): Promise<RefreshTokenOutput> {
     const userToken = await this.tokenService.verify<UserRefreshTokenVerifyInput>(input.refreshToken);
 
-    if (!userToken.userId) {
+    if (!userToken.id) {
       throw new ApiBadRequestException('incorrectToken');
     }
 
-    const userURI = `${this.secret.APPS.USER}/api/v1/find-by?id=${userToken.userId}`;
+    const userURI = `${this.secret.APPS.USER.HOST}/api/v1/users/search?id=${userToken.id}`;
     const { data: user } = await this.http.instance().get<UserEntity>(userURI);
 
     if (!user) {
@@ -56,5 +56,5 @@ export type RefreshTokenInput = z.infer<typeof RefreshTokenSchema>;
 export type RefreshTokenOutput = { accessToken: string; refreshToken: string };
 
 export type UserRefreshTokenVerifyInput = {
-  userId: string | null;
+  id: string | null;
 };

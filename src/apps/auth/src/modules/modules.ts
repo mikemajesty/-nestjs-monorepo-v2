@@ -8,6 +8,7 @@ import { SecretsModule } from '@/infra/secrets';
 import { HealthModule } from './health/module';
 import { LoginModule } from './login/module';
 import { LogoutModule } from './logout/module';
+import { ResetPasswordModule } from './reset-password/module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LogoutModule } from './logout/module';
     HealthModule,
     LoggerModule,
     PostgresDatabaseModule,
+    ResetPasswordModule,
     MongoDatabaseModule,
     LoginModule,
     LogoutModule

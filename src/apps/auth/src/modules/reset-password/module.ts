@@ -7,7 +7,11 @@ import { IResetPasswordRepository } from '@/core/reset-password/repository/reset
 import { ResetPasswordConfirmUsecase } from '@/core/reset-password/use-cases/reset-password-confirm';
 import { ResetPasswordSendEmailUsecase } from '@/core/reset-password/use-cases/reset-password-send-email';
 import { RedisCacheModule } from '@/infra/cache/redis';
+import { PermissionSchema } from '@/infra/database/postgres/schemas/permission';
 import { ResetPasswordSchema } from '@/infra/database/postgres/schemas/reset-password';
+import { RoleSchema } from '@/infra/database/postgres/schemas/role';
+import { UserSchema } from '@/infra/database/postgres/schemas/user';
+import { UserPasswordSchema } from '@/infra/database/postgres/schemas/user-password';
 import { HttpModule, IHttpAdapter } from '@/infra/http';
 import { LoggerModule } from '@/infra/logger';
 import { ISecretsAdapter, SecretsModule } from '@/infra/secrets';
@@ -26,7 +30,14 @@ import { ResetPasswordRepository } from './repository';
     RedisCacheModule,
     TokenLibModule,
     EventLibModule,
-    TypeOrmModule.forFeature([ResetPasswordSchema]),
+    TypeOrmModule.forFeature([
+      ResetPasswordSchema,
+      UserSchema,
+      UserPasswordSchema,
+      UserPasswordSchema,
+      RoleSchema,
+      PermissionSchema
+    ]),
     HttpModule
   ],
   controllers: [ResetPasswordController],
