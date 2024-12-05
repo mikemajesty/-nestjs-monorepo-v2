@@ -30,6 +30,21 @@
         "run-script",
         "start:auth"
       ]
+    },
+    {
+      "name": "Debug: @cat.api",
+      "type": "node",
+      "request": "launch",
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "start:cat"
+      ]
     }
   ]
 }

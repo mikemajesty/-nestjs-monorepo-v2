@@ -3,7 +3,7 @@ import { ZodIssue } from 'zod';
 
 import { RoleEntity, RoleEnum } from '@/core/role/entity/role';
 import { IRoleRepository } from '@/core/role/repository/role';
-import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
+import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
 import { ApiConflictException, ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/tests';
@@ -21,8 +21,14 @@ describe(UserUpdateUsecase.name, () => {
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [],
       providers: [
+        {
+          provide: ILoggerAdapter,
+          useValue: {
+            info: jest.fn()
+          }
+        },
         {
           provide: IUserRepository,
           useValue: {}

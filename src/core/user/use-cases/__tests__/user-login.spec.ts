@@ -1,40 +1,50 @@
 import { Test } from '@nestjs/testing';
+import { Axios } from 'axios';
 import { ZodIssue } from 'zod';
 
 import { RoleEntity, RoleEnum } from '@/core/role/entity/role';
+import { IHttpAdapter } from '@/infra/http';
+import { ISecretsAdapter } from '@/infra/secrets';
 import { ITokenAdapter, TokenLibModule } from '@/libs/token';
 import { ApiBadRequestException, ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/tests';
 import { IUsecase } from '@/utils/usecase';
 
 import { UserEntity } from '../../entity/user';
-import { IUserRepository } from '../../repository/user';
 import { LoginInput, LoginOutput, LoginUsecase } from '../user-login';
 
 describe(LoginUsecase.name, () => {
   let usecase: IUsecase;
-  let repository: IUserRepository;
+  let http: jest.Mocked<IHttpAdapter>;
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       imports: [TokenLibModule],
       providers: [
         {
-          provide: IUserRepository,
-          useValue: {}
+          provide: IHttpAdapter,
+          useValue: {
+            instance: jest.fn()
+          }
+        },
+        {
+          provide: ISecretsAdapter,
+          useValue: {
+            APPS: { USER: { HOST: 'https://github.com' } }
+          } as Partial<ISecretsAdapter>
         },
         {
           provide: IUsecase,
-          useFactory: (userRepository: IUserRepository, token: ITokenAdapter) => {
-            return new LoginUsecase(userRepository, token);
+          useFactory: (tokenService: ITokenAdapter, http: IHttpAdapter, secret: ISecretsAdapter) => {
+            return new LoginUsecase(tokenService, http, secret);
           },
-          inject: [IUserRepository, ITokenAdapter]
+          inject: [ITokenAdapter, IHttpAdapter, ISecretsAdapter]
         }
       ]
     }).compile();
 
     usecase = app.get(IUsecase);
-    repository = app.get(IUserRepository);
+    http = app.get(IHttpAdapter);
   });
 
   test('when no input is specified, should expect an error', async () => {
@@ -54,7 +64,11 @@ describe(LoginUsecase.name, () => {
 
   const input: LoginInput = { email: 'admin@admin.com', password: '****' };
   test('when user not found, should expect an error', async () => {
-    repository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>(null);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity | null }>({ data: null })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
@@ -68,23 +82,32 @@ describe(LoginUsecase.name, () => {
   });
 
   test('when user role not found, should expect an error', async () => {
-    repository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>({
-      ...user,
-      roles: []
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: new UserEntity({ ...user, roles: [] }) })
+      } as Partial<Axios> as Axios;
     });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
   test('when password is incorrect, should expect an error', async () => {
-    repository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>(user);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: user })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiBadRequestException);
   });
 
   test('when user login successfully, should expect a token', async () => {
     user.password.password = '69bf0bc46f51b33377c4f3d92caf876714f6bbbe99e7544487327920873f9820';
-    repository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>(user);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: user })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).resolves.toEqual({
       accessToken: expect.any(String),

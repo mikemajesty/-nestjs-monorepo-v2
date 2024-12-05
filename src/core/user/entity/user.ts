@@ -18,7 +18,7 @@ export const UserEntitySchema = z.object({
   id: ID,
   name: Name,
   email: Email,
-  roles: z.array(Role.optional()).min(1),
+  roles: z.array(Role.optional()),
   password: Password.optional(),
   createdAt: CreatedAt,
   updatedAt: UpdatedAt,

@@ -18,6 +18,7 @@
     "monorepo:build": "concurrently \"yarn workspace @app/user build\"",
     "start:user": "nest start @app/user --debug --watch",
     "start:auth": "nest start @app/auth --debug --watch",
+    "start:cat": "nest start @app/cat --debug --watch",
     "start:prod": "node dist/apps/user_api/main",
     "test": "jest --config=\"./jest.config.ts\" --detectOpenHandles",
     "test:cov": "jest --config=\"./jest-coverage.config.ts\" --coverage --detectOpenHandles && yarn make-badges",

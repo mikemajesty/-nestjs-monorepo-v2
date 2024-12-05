@@ -14,6 +14,10 @@ export abstract class ISecretsAdapter {
       PORT: number | string;
       HOST: string;
     };
+    CAT: {
+      PORT: number | string;
+      HOST: string;
+    };
   };
 
   TZ!: string;

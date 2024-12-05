@@ -1,14 +1,16 @@
 import { Test } from '@nestjs/testing';
+import { Axios } from 'axios';
 import { ZodIssue } from 'zod';
 
 import { RoleEntity, RoleEnum } from '@/core/role/entity/role';
+import { IHttpAdapter } from '@/infra/http';
+import { ISecretsAdapter } from '@/infra/secrets';
 import { ITokenAdapter, SignOutput } from '@/libs/token';
 import { ApiBadRequestException, ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/tests';
 import { IUsecase } from '@/utils/usecase';
 
 import { UserEntity } from '../../entity/user';
-import { IUserRepository } from '../../repository/user';
 import {
   RefreshTokenInput,
   RefreshTokenOutput,
@@ -18,7 +20,7 @@ import {
 
 describe(RefreshTokenUsecase.name, () => {
   let usecase: IUsecase;
-  let repository: IUserRepository;
+  let http: jest.Mocked<IHttpAdapter>;
   let token: ITokenAdapter;
 
   beforeEach(async () => {
@@ -26,8 +28,16 @@ describe(RefreshTokenUsecase.name, () => {
       imports: [],
       providers: [
         {
-          provide: IUserRepository,
-          useValue: {}
+          provide: ISecretsAdapter,
+          useValue: {
+            APPS: { USER: { HOST: 'https://github.com/', PORT: 3000 } }
+          } as Partial<ISecretsAdapter> as ISecretsAdapter
+        },
+        {
+          provide: IHttpAdapter,
+          useValue: {
+            instance: jest.fn()
+          }
         },
         {
           provide: ITokenAdapter,
@@ -37,16 +47,16 @@ describe(RefreshTokenUsecase.name, () => {
         },
         {
           provide: IUsecase,
-          useFactory: (repository: IUserRepository, token: ITokenAdapter) => {
-            return new RefreshTokenUsecase(repository, token);
+          useFactory: (tokenService: ITokenAdapter, http: IHttpAdapter, secret: ISecretsAdapter) => {
+            return new RefreshTokenUsecase(tokenService, http, secret);
           },
-          inject: [IUserRepository, ITokenAdapter]
+          inject: [ITokenAdapter, IHttpAdapter, ISecretsAdapter]
         }
       ]
     }).compile();
 
     usecase = app.get(IUsecase);
-    repository = app.get(IUserRepository);
+    http = app.get(IHttpAdapter);
     token = app.get(ITokenAdapter);
   });
 
@@ -67,9 +77,13 @@ describe(RefreshTokenUsecase.name, () => {
   const input: RefreshTokenInput = { refreshToken: '<token>' };
   test('when token is incorrect, should expect an error', async () => {
     token.verify = TestUtils.mockImplementation<UserRefreshTokenVerifyInput>(() => ({
-      userId: null
+      id: null
     }));
-    repository.findOne = TestUtils.mockResolvedValue<UserEntity>(null);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity | null }>({ data: null })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiBadRequestException);
   });
@@ -77,10 +91,14 @@ describe(RefreshTokenUsecase.name, () => {
   test('when user not found, should expect an error', async () => {
     token.verify = TestUtils.mockImplementation<UserRefreshTokenVerifyInput>(() => {
       return {
-        userId: TestUtils.getMockUUID()
+        id: TestUtils.getMockUUID()
       };
     });
-    repository.findOne = TestUtils.mockResolvedValue<UserEntity>(null);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity | null }>({ data: null })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
@@ -96,12 +114,13 @@ describe(RefreshTokenUsecase.name, () => {
   test('when user role not found, should expect an error', async () => {
     token.verify = TestUtils.mockImplementation<UserRefreshTokenVerifyInput>(() => {
       return {
-        userId: TestUtils.getMockUUID()
+        id: TestUtils.getMockUUID()
       };
     });
-    repository.findOne = TestUtils.mockResolvedValue<UserEntity>({
-      ...user,
-      roles: []
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: new UserEntity({ ...user, roles: [] }) })
+      } as Partial<Axios> as Axios;
     });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
@@ -109,11 +128,15 @@ describe(RefreshTokenUsecase.name, () => {
 
   test('when user refresh token successfully, should expect a token', async () => {
     token.verify = TestUtils.mockImplementation<UserRefreshTokenVerifyInput>(() => ({
-      userId: TestUtils.getMockUUID()
+      id: TestUtils.getMockUUID()
     }));
     token.sign = TestUtils.mockReturnValue<SignOutput>({ token: '<token>' });
     user.password.password = '69bf0bc46f51b33377c4f3d92caf876714f6bbbe99e7544487327920873f9820';
-    repository.findOne = TestUtils.mockResolvedValue<UserEntity>(user);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: user })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).resolves.toEqual({
       accessToken: expect.any(String),

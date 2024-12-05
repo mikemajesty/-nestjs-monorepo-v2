@@ -50,6 +50,13 @@ import { EnvEnum } from './types';
                 .or(z.string())
                 .transform((p) => Number(p)),
               HOST: z.string()
+            }),
+            CAT: z.object({
+              PORT: z
+                .number()
+                .or(z.string())
+                .transform((p) => Number(p)),
+              HOST: z.string()
             })
           }),
           REDIS_URL: z.string().url(),

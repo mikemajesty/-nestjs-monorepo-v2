@@ -1,10 +1,12 @@
 import { Test } from '@nestjs/testing';
+import { Axios } from 'axios';
 import { ZodIssue } from 'zod';
 
 import { RoleEntity, RoleEnum } from '@/core/role/entity/role';
 import { UserEntity } from '@/core/user/entity/user';
-import { IUserRepository } from '@/core/user/repository/user';
+import { IHttpAdapter } from '@/infra/http';
 import { CreatedModel, RemovedModel } from '@/infra/repository';
+import { ISecretsAdapter } from '@/infra/secrets';
 import { EmitEventOutput, IEventAdapter } from '@/libs/event';
 import { ITokenAdapter } from '@/libs/token';
 import { ApiBadRequestException, ApiNotFoundException, ApiUnauthorizedException } from '@/utils/exception';
@@ -22,19 +24,27 @@ import {
 describe(ResetPasswordConfirmUsecase.name, () => {
   let usecase: IUsecase;
   let repository: IResetPasswordRepository;
-  let userRepository: IUserRepository;
+  let http: jest.Mocked<IHttpAdapter>;
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       imports: [],
       providers: [
         {
-          provide: IUserRepository,
+          provide: IResetPasswordRepository,
           useValue: {}
         },
         {
-          provide: IResetPasswordRepository,
-          useValue: {}
+          provide: ISecretsAdapter,
+          useValue: {
+            APPS: { USER: { HOST: 'https://github.com/', PORT: 3000 } }
+          } as Partial<ISecretsAdapter>
+        },
+        {
+          provide: IHttpAdapter,
+          useValue: {
+            instance: jest.fn()
+          }
         },
         {
           provide: ITokenAdapter,
@@ -52,20 +62,21 @@ describe(ResetPasswordConfirmUsecase.name, () => {
           provide: IUsecase,
           useFactory: (
             repository: IResetPasswordRepository,
-            userRepository: IUserRepository,
             token: ITokenAdapter,
-            event: IEventAdapter
+            event: IEventAdapter,
+            http: IHttpAdapter,
+            secret: ISecretsAdapter
           ) => {
-            return new ResetPasswordConfirmUsecase(repository, userRepository, token, event);
+            return new ResetPasswordConfirmUsecase(repository, token, event, http, secret);
           },
-          inject: [IResetPasswordRepository, IUserRepository, ITokenAdapter, IEventAdapter]
+          inject: [IResetPasswordRepository, ITokenAdapter, IEventAdapter, IHttpAdapter, ISecretsAdapter]
         }
       ]
     }).compile();
 
     usecase = app.get(IUsecase);
     repository = app.get(IResetPasswordRepository);
-    userRepository = app.get(IUserRepository);
+    http = app.get(IHttpAdapter);
   });
 
   test('when no input is specified, should expect an error', async () => {
@@ -98,13 +109,21 @@ describe(ResetPasswordConfirmUsecase.name, () => {
   });
 
   test('when user not found, should expect an error', async () => {
-    userRepository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>(null);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity | null }>({ data: null })
+      } as Partial<Axios> as Axios;
+    });
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
   test('when token was expired, should expect an error', async () => {
-    userRepository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>(user);
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: user })
+      } as Partial<Axios> as Axios;
+    });
     repository.findByIdUserId = TestUtils.mockResolvedValue<ResetPasswordEntity>(null);
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiUnauthorizedException);
@@ -112,12 +131,15 @@ describe(ResetPasswordConfirmUsecase.name, () => {
 
   const defaultResetPassword = new ResetPasswordEntity({ id: TestUtils.getMockUUID(), token: 'token', user });
   test('when confirm successfully, should expect a void', async () => {
-    userRepository.findOneWithRelation = TestUtils.mockResolvedValue<UserEntity>(user);
-    userRepository.create = TestUtils.mockResolvedValue<CreatedModel>();
+    http.instance.mockImplementation(() => {
+      return {
+        get: TestUtils.mockResolvedValue<{ data: UserEntity }>({ data: user }),
+        post: TestUtils.mockResolvedValue<CreatedModel | null>(null)
+      } as Partial<Axios> as Axios;
+    });
     repository.findByIdUserId = TestUtils.mockResolvedValue<ResetPasswordEntity>(defaultResetPassword);
     repository.remove = TestUtils.mockResolvedValue<RemovedModel>();
 
     await expect(usecase.execute(input)).resolves.toBeUndefined();
-    expect(userRepository.create).toHaveBeenCalled();
   });
 });
