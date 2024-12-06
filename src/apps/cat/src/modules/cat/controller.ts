@@ -37,8 +37,8 @@ export class CatController {
   @ApiBody(SwaggerRequest.create)
   @Version('1')
   @Permission('cat:create')
-  async create(@Req() { body, user, tracing }: ApiRequest): Promise<CatCreateOutput> {
-    return await this.createUsecase.execute(body as CatCreateInput, { user, tracing });
+  async create(@Req() { body }: ApiRequest): Promise<CatCreateOutput> {
+    return await this.createUsecase.execute(body as CatCreateInput);
   }
 
   @Put(':id')
@@ -48,8 +48,8 @@ export class CatController {
   @ApiParam({ name: 'id', required: true, allowEmptyValue: false })
   @Version('1')
   @Permission('cat:update')
-  async update(@Req() { body, user, tracing, params }: ApiRequest): Promise<CatUpdateOutput> {
-    return await this.updateUsecase.execute({ ...body, id: params.id } as CatUpdateInput, { user, tracing });
+  async update(@Req() { body, params }: ApiRequest): Promise<CatUpdateOutput> {
+    return await this.updateUsecase.execute({ ...body, id: params.id } as CatUpdateInput);
   }
 
   @Get(':id')
@@ -88,7 +88,7 @@ export class CatController {
   @ApiResponse(SwaggerResponse.delete[404])
   @Version('1')
   @Permission('cat:delete')
-  async delete(@Req() { params, user, tracing }: ApiRequest): Promise<CatDeleteOutput> {
-    return await this.deleteUsecase.execute(params as CatDeleteInput, { user, tracing });
+  async delete(@Req() { params }: ApiRequest): Promise<CatDeleteOutput> {
+    return await this.deleteUsecase.execute(params as CatDeleteInput);
   }
 }

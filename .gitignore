@@ -11,3 +11,4 @@ dist
 yarn-error.log
 **/yarn-error.log/**
 coverage
+.docker

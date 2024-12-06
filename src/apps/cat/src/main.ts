@@ -17,7 +17,7 @@ import {
 } from '@/observables/interceptors';
 
 import { description, name, version } from '../package.json';
-import { AuthAppModule } from './modules/modules';
+import { AuthAppModule } from './modules/app.modules';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthAppModule);

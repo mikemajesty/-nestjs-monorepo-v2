@@ -24,7 +24,7 @@
     "test:cov": "jest --config=\"./jest-coverage.config.ts\" --coverage --detectOpenHandles && yarn make-badges",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "lint": "eslint \"src/**/*.ts\" --fix",
-    "infra": "docker-compose -f docker-compose-infra.yml up -d --remove-orphans",
+    "infra": "docker-compose -f docker-compose-infra.yml up --build",
     "typeorm": "ts-node -r tsconfig-paths/register \"./node_modules/typeorm/cli.js\"",
     "migration-postgres:create": "yarn typeorm migration:create \"./src/infra/database/postgres/migrations/rename\"",
     "migration-postgres:run": "yarn typeorm migration:run -d ./src/infra/database/postgres/config --transaction none",

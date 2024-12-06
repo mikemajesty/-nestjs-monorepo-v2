@@ -10,8 +10,8 @@ import { CatListUsecase } from '@/core/cat/use-cases/cat-list';
 import { CatUpdateUsecase } from '@/core/cat/use-cases/cat-update';
 import { RedisCacheModule } from '@/infra/cache/redis';
 import { ConnectionName } from '@/infra/database/enum';
+import { MongoDatabaseModule } from '@/infra/database/mongo';
 import { Cat, CatDocument, CatSchema } from '@/infra/database/mongo/schemas/cat';
-import { PostgresDatabaseModule } from '@/infra/database/postgres/module';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
 import { AuthenticationMiddleware } from '@/observables/middlewares';
@@ -28,7 +28,7 @@ import { CatController } from './controller';
 import { CatRepository } from './repository';
 
 @Module({
-  imports: [TokenLibModule, LoggerModule, RedisCacheModule, PostgresDatabaseModule],
+  imports: [TokenLibModule, LoggerModule, RedisCacheModule, MongoDatabaseModule],
   controllers: [CatController],
   providers: [
     {

@@ -6,6 +6,9 @@ services:
     container_name: nestjs-monorepo-mongo
     image: mongo
     restart: always
+    volumes: 
+      - nestjs-monorepo-mongo:/data/db
+      - .docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - mongo-network
     ports:
@@ -59,6 +62,7 @@ services:
 volumes:
   nestjs-monorepo-postgres:
   nestjs-monorepo-redis:
+  nestjs-monorepo-mongo:
 networks:
   mongo-network:
     driver: bridge
