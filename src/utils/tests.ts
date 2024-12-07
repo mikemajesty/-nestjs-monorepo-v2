@@ -6,6 +6,10 @@ import { UserRequest } from '@/utils/request';
 import { BaseException } from './exception';
 
 export class TestUtils {
+  static mock(): jest.Mock {
+    return jest.fn();
+  }
+
   static mockResolvedValue<T = void>(mock?: Partial<NoInfer<Partial<T>>> | null): jest.Mock<Promise<NoInfer<T>>> {
     return jest.fn().mockResolvedValue(mock as NoInfer<Partial<T>>);
   }

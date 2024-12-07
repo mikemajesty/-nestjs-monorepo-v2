@@ -1,9 +1,10 @@
 {
   "name": "@app/user",
   "version": "1.0.0",
-  "description": "",
+  "description": "dist/main",
   "scripts": {
-    "build": "nest build"
+    "build": "nest build",
+    "start": "yarn"
   },
   "author": "",
   "license": "MIT",

@@ -1,0 +1,12 @@
+version: "2"
+services:
+  user-api:
+    container_name: monorepo-user-api
+    build:
+      context: .
+      dockerfile: ./src/apps/user/Dockerfile
+    ports:
+      - "3000:3000"
+      - "5870:5870"
+    volumes:
+      - .:/src:cached
