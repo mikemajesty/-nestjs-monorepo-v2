@@ -4,12 +4,6 @@
     "declaration": false,
     "outDir": "../../../dist/apps/user"
   },
-  "include": [
-    "./**/*.ts",
-  ],
-  "exclude": [
-    "node_modules",
-    "test",
-    "**/*spec.ts"
-  ]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "test", "**/*spec.ts"]
 }

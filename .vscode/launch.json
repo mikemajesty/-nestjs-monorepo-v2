@@ -6,45 +6,30 @@
       "type": "node",
       "request": "launch",
       "restart": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "start:user"
-      ]
+      "runtimeArgs": ["run-script", "start:user"]
     },
     {
       "name": "Debug: @auth.api",
       "type": "node",
       "request": "launch",
       "restart": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "start:auth"
-      ]
+      "runtimeArgs": ["run-script", "start:auth"]
     },
     {
       "name": "Debug: @cat.api",
       "type": "node",
       "request": "launch",
       "restart": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "start:cat"
-      ]
+      "runtimeArgs": ["run-script", "start:cat"]
     }
   ]
 }

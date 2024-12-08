@@ -13,27 +13,13 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/apps/*": [
-        "src/apps/*"
-      ],
-      "@/core/*": [
-        "src/core/*"
-      ],
-      "@/observables/*": [
-        "src/observables/*"
-      ],
-      "@/infra/*": [
-        "src/infra/*"
-      ],
-      "@/utils/*": [
-        "src/utils/*"
-      ],
-      "@/libs/*": [
-        "src/libs/*"
-      ],
-      "@/tools/*": [
-        "src/tools/*"
-      ]
+      "@/apps/*": ["src/apps/*"],
+      "@/core/*": ["src/core/*"],
+      "@/observables/*": ["src/observables/*"],
+      "@/infra/*": ["src/infra/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/libs/*": ["src/libs/*"],
+      "@/tools/*": ["src/tools/*"]
     },
     "incremental": true,
     "strict": true,
