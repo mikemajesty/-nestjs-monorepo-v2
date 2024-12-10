@@ -31,6 +31,10 @@
     "migration-postgres:create": "yarn typeorm migration:create \"./src/infra/database/postgres/migrations/rename\"",
     "migration-postgres:run": "yarn typeorm migration:run -d ./src/infra/database/postgres/config --transaction none",
     "migration-postgres:undo": "yarn typeorm migration:revert -d ./src/infra/database/postgres/config --transaction none",
+    "migration-mongo:create": "ts-node -r tsconfig-paths/register ./src/infra/database/mongo/config.ts new -n rename",
+    "migration-mongo:run": "ts-node -r tsconfig-paths/register ./src/infra/database/mongo/config.ts up",
+    "migration-mongo:undo": "ts-node -r tsconfig-paths/register ./src/infra/database/mongo/config.ts down",
+    "migration:run": "concurrently \"npm run migration-postgres:run\" \"npm run migration-mongo:run\"",
     "make-badges": "istanbul-badges-readme"
   },
   "dependencies": {
