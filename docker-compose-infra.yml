@@ -8,7 +8,7 @@ services:
     restart: always
     volumes: 
       - nestjs-monorepo-mongo:/data/db
-      - .docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - .docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - mongo-network
     ports:
